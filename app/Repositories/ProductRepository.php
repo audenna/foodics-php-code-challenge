@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Product;
 use App\Repositories\Base\BaseRepositoryAbstract;
+use Illuminate\Support\Facades\Log;
 
 class ProductRepository extends BaseRepositoryAbstract
 {
@@ -22,5 +23,18 @@ class ProductRepository extends BaseRepositoryAbstract
         parent::__construct($product, $this->databaseTableName);
     }
 
+    /**
+     * @return void
+     */
+    public function seedDefaultProduct(): void
+    {
+        try {
 
+            $name = 'Burger';
+            if (! $this->findSingleByWhereClause(['name' => $name])) {
+                $this->createModel(['name' => $name]);
+            }
+
+        } catch (\Exception $exception) { Log::error($exception); }
+    }
 }
