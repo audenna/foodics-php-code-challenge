@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Utilities\Caches;
+namespace App\Services\Caches;
 
 class ProductCache
 {
