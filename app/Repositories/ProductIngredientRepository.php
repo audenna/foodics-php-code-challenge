@@ -49,7 +49,7 @@ class ProductIngredientRepository extends BaseRepositoryAbstract
                 ],
             ];
 
-            $burger_product = $productRepository->findSingleByWhereClause(['name' => 'Burger']);
+            $burger_product = $productRepository->findSingleModelByKeyValuePair(['name' => 'Burger']);
             if ($burger_product) {
                 foreach ($ingredients as $ingredient) {
                     $this->saveRecordIfNotCreated($burger_product->getId(), $ingredient['name'], $ingredient['qty_required'], $ingredientRepository);
@@ -76,8 +76,8 @@ class ProductIngredientRepository extends BaseRepositoryAbstract
     {
         try {
 
-            $ingredient = $ingredientRepository->findSingleByWhereClause(['name' => $ingredientName]);
-            if ($ingredient && ! $this->findSingleByWhereClause(['product_id' => $productId, 'ingredient_id' => $ingredient->getId()])) {
+            $ingredient = $ingredientRepository->findSingleModelByKeyValuePair(['name' => $ingredientName]);
+            if ($ingredient && ! $this->findSingleModelByKeyValuePair(['product_id' => $productId, 'ingredient_id' => $ingredient->getId()])) {
                 $this->createModel(
                     [
                         'product_id'    => $productId,

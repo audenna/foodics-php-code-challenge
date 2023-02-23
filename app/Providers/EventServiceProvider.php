@@ -2,12 +2,13 @@
 
 namespace App\Providers;
 
-use App\Models\Ingredient;
-use App\Observers\IngredientObserver;
+
+use App\Models\ProductIngredient;
+use App\Observers\ProductIngredientObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
+
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -43,6 +44,6 @@ class EventServiceProvider extends ServiceProvider
      */
     private function bootModelObservers(): void
     {
-        Ingredient::observe(IngredientObserver::class);
+        ProductIngredient::observe(ProductIngredientObserver::class);
     }
 }

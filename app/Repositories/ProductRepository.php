@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Product;
 use App\Repositories\Base\BaseRepositoryAbstract;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
 class ProductRepository extends BaseRepositoryAbstract
@@ -24,17 +25,28 @@ class ProductRepository extends BaseRepositoryAbstract
     }
 
     /**
+     *
      * @return void
      */
     public function seedDefaultProduct(): void
     {
         try {
 
-            $name = 'Burger';
-            if (! $this->findSingleByWhereClause(['name' => $name])) {
-                $this->createModel(['name' => $name]);
-            }
+            $this->createNewProduct('Burger');
 
         } catch (\Exception $exception) { Log::error($exception); }
+    }
+
+    /**
+     * @param string $productName
+     * @return Model|null
+     */
+    public function createNewProduct(string $productName): ?Model
+    {
+        if (! $this->findSingleModelByKeyValuePair(['name' => $productName])) {
+            return $this->createModel(['name' => $productName]);
+        }
+
+        return null;
     }
 }

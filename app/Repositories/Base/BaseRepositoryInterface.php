@@ -32,7 +32,7 @@ interface BaseRepositoryInterface
      * @param array $relations
      * @return Model|null
      */
-    public function findSingleByWhereClause(array $queries, array $columns = ['*'], array $relations = []): ?Model;
+    public function findSingleModelByKeyValuePair(array $queries, array $columns = ['*'], array $relations = []): ?Model;
 
     /**
      * Get all Models or entities

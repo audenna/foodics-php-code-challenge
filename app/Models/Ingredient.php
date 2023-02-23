@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Ingredient extends Model
@@ -15,6 +16,14 @@ class Ingredient extends Model
      * @var array
      */
     protected $guarded = [];
+
+    /**
+     * @return HasMany
+     */
+    public function products(): HasMany
+    {
+        return $this->hasMany(ProductIngredient::class, 'ingredient_id');
+    }
 
     /**
      * @return Attribute
@@ -32,5 +41,13 @@ class Ingredient extends Model
     public function getId(): int
     {
         return $this->attributes['id'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->attributes['name'];
     }
 }

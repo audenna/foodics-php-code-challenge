@@ -6,6 +6,7 @@ namespace App\Repositories\Base;
 use App\Utils\Utils;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 abstract class BaseRepositoryAbstract implements BaseRepositoryInterface
 {
@@ -117,7 +118,7 @@ abstract class BaseRepositoryAbstract implements BaseRepositoryInterface
      * @param array $relations
      * @return Model|null
      */
-    public function findSingleByWhereClause(array $queries, array $columns = ['*'], array $relations = []): ?Model
+    public function findSingleModelByKeyValuePair(array $queries, array $columns = ['*'], array $relations = []): ?Model
     {
         $query = $this->model->with($relations)->select($columns);
 

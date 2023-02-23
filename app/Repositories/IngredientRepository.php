@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Ingredient;
 use App\Repositories\Base\BaseRepositoryAbstract;
 use App\Utils\Utils;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
 class IngredientRepository extends BaseRepositoryAbstract
@@ -49,11 +50,24 @@ class IngredientRepository extends BaseRepositoryAbstract
             ];
 
             foreach ($ingredients as $ingredient) {
-                if (! $this->findSingleByWhereClause(['name' => $ingredient['name']])) {
-                    $this->createModel($ingredient);
-                }
+                $this->createNewIngredient($ingredient['name'], $ingredient['available_stock_in_gram']);
             }
 
         } catch (\Exception $exception) { Log::error($exception); }
+    }
+
+    /**
+     *
+     * @param string $name
+     * @param float $quantityOfStock
+     * @return Model|null
+     */
+    public function createNewIngredient(string $name, float $quantityOfStock): ?Model
+    {
+        if (! $this->findSingleModelByKeyValuePair(['name' => $name])) {
+            return $this->createModel(['name' => $name, 'available_stock_in_gram' => $quantityOfStock]);
+        }
+
+        return null;
     }
 }
