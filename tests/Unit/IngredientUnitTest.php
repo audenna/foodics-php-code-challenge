@@ -106,7 +106,7 @@ class IngredientUnitTest extends TestCase
      *
      * @return void
      */
-    public function test_an_email_can_be_sent_when_an_ingredient_has_reached_below_its_threshold(): void
+    public function test_an_email_can_be_sent_when_an_ingredient_has_gone_below_its_threshold(): void
     {
         # trigger the IngredientSeeder
         $this->seed(IngredientSeeder::class);
@@ -129,5 +129,37 @@ class IngredientUnitTest extends TestCase
         $ingredient_with_less_stock = $this->ingredientRepository->getTheIngredientThatHasGoneBelowTheThreshold();
         # assert that an Ingredient that has gone below 50% can be retrieved
         $this->assertNotNull($ingredient_with_less_stock);
+    }
+
+    /**
+     * This tests that an email can be sent when an Ingredient has gone below 50%
+     *
+     * @return void
+     */
+    public function test_email_can_be_sent_when_an_ingredient_has_gone_below_its_threshold(): void
+    {
+        # trigger the IngredientSeeder
+        $this->seed(IngredientSeeder::class);
+
+        # assert that the ingredient model has been populated
+        $this->assertDatabaseCount('ingredients', 3);
+
+        # get any Ingredient between a sated range of numbers
+        $ingredient_id = $this->faker->numberBetween(1, 3);
+        $this->assertDatabaseHas('ingredients', ['id' => $ingredient_id]);
+        $ingredient = $this->ingredientRepository->findSingleModelByKeyValuePair(['id' => $ingredient_id]);
+        $this->assertNotNull($ingredient);
+
+        # consume less than 50 % of the Ingredients
+        $ingredient = $this->ingredientRepository->updateAvailableStock($ingredient_id, $ingredient->getThreshold() + 10);
+        # assert that the Stock has gone below its threshold (50%)
+        $this->assertTrue($ingredient->getAvailableStock() < $ingredient->getThreshold());
+
+        # send an email notification
+        $this->orderRepository->sendEmailNotificationIfAnIngredientHasGoneLessOfTheThreshold($this->ingredientRepository);
+        # get the Ingredient that has gone below 50%
+        $ingredient_with_less_stock = $this->ingredientRepository->getTheIngredientThatHasGoneBelowTheThreshold();
+        # assert that an Ingredient that has gone below 50% has received the is_email_sent update
+        $this->assertNull($ingredient_with_less_stock);
     }
 }

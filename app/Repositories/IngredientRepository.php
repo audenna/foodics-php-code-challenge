@@ -2,11 +2,9 @@
 
 namespace App\Repositories;
 
-use App\Jobs\SendEmailJob;
 use App\Models\Ingredient;
 use App\Repositories\Base\BaseRepositoryAbstract;
 use App\Utils\Utils;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -121,14 +119,6 @@ class IngredientRepository extends BaseRepositoryAbstract
     public function updateIsEmailSent(int $ingredientId): void
     {
         DB::table($this->databaseTableName)->where('id', $ingredientId)->update(['is_email_sent' => 1]);
-    }
-
-    /**
-     * @return int
-     */
-    public function hasAnEmailBeenSent(): int
-    {
-        return $this->countRecords('id', ['is_email_sent' => 1]);
     }
 
     /**
