@@ -33,8 +33,10 @@ class OrderUnitTest extends TestCase
                     'required',
                     'integer',
                     function ($key, $value, $callback) {
-                        # check that the product still has enough quantity in stock
-
+                        # check that at least one Ingredient has enough to handle the request
+                        if (! $this->ingredientRepository->countRecords('id', ['is_out_of_stock' => 0])) {
+                            return $callback("Unable to proceed with your request at this time. Product ingredients are out of stock.");
+                        }
                     }
                 ]
             ],
