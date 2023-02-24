@@ -83,4 +83,15 @@ interface BaseRepositoryInterface
      * @return array
      */
     public function getAllTokens(string $columnName): array;
+
+    /**
+     * Find Model by column name and value
+     *
+     * @param string $columnName
+     * @param string|null $value
+     * @param array $columns
+     * @param array $relations
+     * @return array
+     */
+    public function findRecordsByColumnAndValue(string $columnName, ?string $value = null, array $columns = ['*'], array $relations = []): array;
 }

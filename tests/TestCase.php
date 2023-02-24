@@ -47,6 +47,11 @@ abstract class TestCase extends BaseTestCase
     protected ProductIngredientRepository $productIngredientRepository;
 
     /**
+     * @var string
+     */
+    protected string $api_base_path = 'api';
+
+    /**
      * @return void
      */
     protected function setUp(): void

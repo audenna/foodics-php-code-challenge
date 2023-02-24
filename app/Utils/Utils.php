@@ -2,6 +2,10 @@
 
 namespace App\Utils;
 
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+
 class Utils
 {
 
@@ -52,5 +56,32 @@ class Utils
     public static function getHalfTheAmountInGrams(float $amountInKilograms): float
     {
         return self::convert_to_2_decimal_places($amountInKilograms / 2);
+    }
+
+    /**
+     *
+     * @param array $references
+     * @return string|null
+     */
+    public static function generateUniqueReference(array $references): ?string
+    {
+        try {
+
+            $started       = true;
+            $reference     = null;
+
+            while ($started) {
+                # generate the transaction reference
+                $reference = str_replace('-', '', Str::uuid()->toString());
+                if (! in_array($reference, $references)) $started = false;
+            }
+
+            return $reference;
+
+        } catch (\Exception $exception) {
+            Log::error($exception);
+
+            return null;
+        }
     }
 }

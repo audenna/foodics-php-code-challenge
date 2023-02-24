@@ -2,8 +2,10 @@
 
 namespace App\Repositories;
 
+use App\Models\Order;
 use App\Models\ProductIngredient;
 use App\Repositories\Base\BaseRepositoryAbstract;
+use App\Utils\Utils;
 use Illuminate\Support\Facades\Log;
 
 class ProductIngredientRepository extends BaseRepositoryAbstract
@@ -34,7 +36,7 @@ class ProductIngredientRepository extends BaseRepositoryAbstract
         try {
 
             # set the default ingredients and volumes to be seeder
-            $ingredients = [
+            $product_ingredients = [
                 [
                     'name' => 'Beef',
                     'qty_required' => 150,
@@ -51,10 +53,10 @@ class ProductIngredientRepository extends BaseRepositoryAbstract
 
             $burger_product = $productRepository->findSingleModelByKeyValuePair(['name' => 'Burger']);
             if ($burger_product) {
-                foreach ($ingredients as $ingredient) {
-                    $ingredient = $ingredientRepository->findSingleModelByKeyValuePair(['name' => $ingredient['name']]);
+                foreach ($product_ingredients as $product_ingredient) {
+                    $ingredient = $ingredientRepository->findSingleModelByKeyValuePair(['name' => $product_ingredient['name']]);
                     if ($ingredient) {
-                        $this->saveRecordIfNotCreated($burger_product->getId(), $ingredient->getId(), $ingredient['qty_required']);
+                        $this->saveRecordIfNotCreated($burger_product->getId(), $ingredient->getId(), $product_ingredient['qty_required']);
                     }
                 }
             }
@@ -81,6 +83,29 @@ class ProductIngredientRepository extends BaseRepositoryAbstract
                         'qty_required'  => $quantityRequired,
                     ]
                 );
+            }
+
+        } catch (\Exception $exception) { Log::error($exception); }
+    }
+
+    /**
+     *
+     * @param Order $order
+     * @param IngredientRepository $ingredientRepository
+     * @return void
+     */
+    public function processIngredientStockUpdatesByOrder(Order $order, IngredientRepository $ingredientRepository): void
+    {
+        try {
+
+            # get all the records based on the product Id supplied
+            $product_ingredients    = $this->findRecordsByColumnAndValue('product_id', $order->getProductId());
+            if (count($product_ingredients)) {
+                foreach ($product_ingredients as $product_ingredient) {
+                    # update the Ingredients based on the quantity requested
+                    $total_quantity = Utils::convert_to_2_decimal_places($order->getQuantity() * $product_ingredient->getQtyRequired());
+                    $ingredientRepository->updateAvailableStock($product_ingredient->getIngredientId(), $total_quantity);
+                }
             }
 
         } catch (\Exception $exception) { Log::error($exception); }

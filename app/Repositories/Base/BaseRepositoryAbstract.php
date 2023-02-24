@@ -145,4 +145,25 @@ abstract class BaseRepositoryAbstract implements BaseRepositoryInterface
     {
         return $this->model::where($queries)->sharedLock()->sum($columnToSum);
     }
+
+    /**
+     * Find Model by column name and value
+     *
+     * @param string $columnName
+     * @param string|null $value
+     * @param array $columns
+     * @param array $relations
+     * @return array
+     */
+    public function findRecordsByColumnAndValue(string $columnName, ?string $value = null, array $columns = ['*'], array $relations = []): array
+    {
+        $records = [];
+        $results = $this->model->with($relations)->select($columns)->where($columnName, $value)->sharedLock()->orderByDesc('id')->get();
+
+        if (count($results))
+            foreach ($results as $result)
+                $records[] = $result;
+
+        return $records;
+    }
 }

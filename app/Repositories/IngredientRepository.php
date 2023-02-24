@@ -76,4 +76,23 @@ class IngredientRepository extends BaseRepositoryAbstract
 
         return null;
     }
+
+    /**
+     *
+     * @param int $ingredientId
+     * @param float $totalRequiredQuantity
+     * @return void
+     */
+    public function updateAvailableStock(int $ingredientId, float $totalRequiredQuantity): void
+    {
+        try {
+
+            # check that the ingredient exists before updating
+            $ingredient = $this->findById($ingredientId);
+            if ($ingredient) {
+                $this->updateById($ingredientId, ['available_stock_in_gram' => $ingredient->getAvailableStock() - $totalRequiredQuantity]);
+            }
+
+        } catch (\Exception $exception) { Log::error($exception); }
+    }
 }

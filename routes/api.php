@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +15,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+# show default welcome response
+Route::get('', [Controller::class, 'printWelcome']);
+
+# make an Order
+Route::post('orders', [OrderController::class, 'processCustomerOrder'])->middleware('validate.header');

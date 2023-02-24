@@ -4,7 +4,6 @@ namespace Tests\Unit;
 
 
 use App\Utils\Utils;
-use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class ProductIngredientUnitTest extends TestCase
