@@ -6,7 +6,6 @@ namespace App\Repositories\Base;
 use App\Utils\Utils;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 
 abstract class BaseRepositoryAbstract implements BaseRepositoryInterface
 {

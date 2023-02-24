@@ -50,4 +50,22 @@ class Ingredient extends Model
     {
         return $this->attributes['name'];
     }
+
+    /**
+     * @return float
+     */
+    public function getAvailableStock(): float
+    {
+        return $this->attributes['available_stock_in_gram'];
+    }
+
+    /**
+     * @return float
+     */
+    public function getThreshold(): float
+    {
+        return $this->attributes['threshold_qty'];
+    }
+
+
 }

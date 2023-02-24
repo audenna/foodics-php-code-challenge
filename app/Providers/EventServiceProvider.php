@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 
+use App\Models\Ingredient;
 use App\Models\ProductIngredient;
+use App\Observers\IngredientObserver;
 use App\Observers\ProductIngredientObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;

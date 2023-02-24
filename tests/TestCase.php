@@ -5,8 +5,10 @@ namespace Tests;
 use App\Models\Ingredient;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\ProductIngredient;
 use App\Repositories\IngredientRepository;
 use App\Repositories\OrderRepository;
+use App\Repositories\ProductIngredientRepository;
 use App\Repositories\ProductRepository;
 use App\Services\Caches\ProductCache;
 use Illuminate\Database\Connection;
@@ -40,6 +42,11 @@ abstract class TestCase extends BaseTestCase
     protected IngredientRepository $ingredientRepository;
 
     /**
+     * @var ProductIngredientRepository
+     */
+    protected ProductIngredientRepository $productIngredientRepository;
+
+    /**
      * @return void
      */
     protected function setUp(): void
@@ -54,9 +61,10 @@ abstract class TestCase extends BaseTestCase
         Event::fake();
 
         # import all repository dependencies for Test cases
-        $this->productRepository    = new ProductRepository(new Product());
-        $this->orderRepository      = new OrderRepository(new Order());
-        $this->ingredientRepository = new IngredientRepository(new Ingredient());
+        $this->productRepository           = new ProductRepository(new Product());
+        $this->orderRepository             = new OrderRepository(new Order());
+        $this->ingredientRepository        = new IngredientRepository(new Ingredient());
+        $this->productIngredientRepository = new ProductIngredientRepository(new ProductIngredient());
     }
 
     /**

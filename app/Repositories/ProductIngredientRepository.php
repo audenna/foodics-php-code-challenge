@@ -52,7 +52,10 @@ class ProductIngredientRepository extends BaseRepositoryAbstract
             $burger_product = $productRepository->findSingleModelByKeyValuePair(['name' => 'Burger']);
             if ($burger_product) {
                 foreach ($ingredients as $ingredient) {
-                    $this->saveRecordIfNotCreated($burger_product->getId(), $ingredient['name'], $ingredient['qty_required'], $ingredientRepository);
+                    $ingredient = $ingredientRepository->findSingleModelByKeyValuePair(['name' => $ingredient['name']]);
+                    if ($ingredient) {
+                        $this->saveRecordIfNotCreated($burger_product->getId(), $ingredient->getId(), $ingredient['qty_required']);
+                    }
                 }
             }
 
@@ -62,26 +65,19 @@ class ProductIngredientRepository extends BaseRepositoryAbstract
     /**
      *
      * @param int $productId
-     * @param string $ingredientName
+     * @param string $ingredientId
      * @param float $quantityRequired
-     * @param IngredientRepository $ingredientRepository
      * @return void
      */
-    private function saveRecordIfNotCreated(
-        int                  $productId,
-        string               $ingredientName,
-        float                $quantityRequired,
-        IngredientRepository $ingredientRepository
-    ): void
+    public function saveRecordIfNotCreated(int $productId, string $ingredientId, float  $quantityRequired): void
     {
         try {
 
-            $ingredient = $ingredientRepository->findSingleModelByKeyValuePair(['name' => $ingredientName]);
-            if ($ingredient && ! $this->findSingleModelByKeyValuePair(['product_id' => $productId, 'ingredient_id' => $ingredient->getId()])) {
+            if (! $this->findSingleModelByKeyValuePair(['product_id' => $productId, 'ingredient_id' => $ingredientId])) {
                 $this->createModel(
                     [
                         'product_id'    => $productId,
-                        'ingredient_id' => $ingredient->getId(),
+                        'ingredient_id' => $ingredientId,
                         'qty_required'  => $quantityRequired,
                     ]
                 );

@@ -65,7 +65,13 @@ class IngredientRepository extends BaseRepositoryAbstract
     public function createNewIngredient(string $name, float $quantityOfStock): ?Model
     {
         if (! $this->findSingleModelByKeyValuePair(['name' => $name])) {
-            return $this->createModel(['name' => $name, 'available_stock_in_gram' => $quantityOfStock]);
+            return $this->createModel(
+                [
+                    'name'                    => $name,
+                    'available_stock_in_gram' => $quantityOfStock,
+                    'threshold_qty'           => Utils::getHalfTheAmountInGrams($quantityOfStock)
+                ]
+            );
         }
 
         return null;

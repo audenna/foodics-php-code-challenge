@@ -28,6 +28,8 @@ class Utils
      */
     public static function convert_to_2_decimal_places(float $amount): float
     {
+        if (! $amount) return $amount;
+
         return number_format($amount,2, '.', '');
     }
 
@@ -49,6 +51,6 @@ class Utils
      */
     public static function getHalfTheAmountInGrams(float $amountInKilograms): float
     {
-        return self::convert_to_2_decimal_places((50 / 100) * $amountInKilograms);
+        return self::convert_to_2_decimal_places($amountInKilograms / 2);
     }
 }
