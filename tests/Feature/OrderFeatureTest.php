@@ -63,6 +63,14 @@ class OrderFeatureTest extends TestCase
         # try to make a post request to the Order endpoint
         $this->json('POST', "{$this->api_base_path}/orders", $payload)
             ->assertCreated()
+            ->assertExactJson(
+                [
+                    'header'  => 'Alert',
+                    'status'  => true,
+                    'message' => 'A new Order has been created successfully.',
+                    'data'    => null
+                ],
+            )
             ->json();
     }
 }

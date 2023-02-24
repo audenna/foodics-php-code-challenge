@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\OrderRequest;
+use App\Repositories\IngredientOrderUsageRepository;
 use App\Repositories\IngredientRepository;
 use App\Repositories\OrderRepository;
 use App\Repositories\ProductIngredientRepository;
@@ -20,12 +21,14 @@ class OrderController extends Controller
      * @param ProductIngredientRepository $productIngredientRepository
      * @param ProductRepository $productRepository
      * @param IngredientRepository $ingredientRepository
+     * @param IngredientOrderUsageRepository $usageRepository
      */
     public function __construct(
-        protected OrderRepository             $orderRepository,
-        protected ProductIngredientRepository $productIngredientRepository,
-        protected ProductRepository           $productRepository,
-        protected IngredientRepository        $ingredientRepository
+        protected OrderRepository                $orderRepository,
+        protected ProductIngredientRepository    $productIngredientRepository,
+        protected ProductRepository              $productRepository,
+        protected IngredientRepository           $ingredientRepository,
+        protected IngredientOrderUsageRepository $usageRepository
     ) { }
 
     /**
@@ -37,14 +40,14 @@ class OrderController extends Controller
     {
         try {
 
-            Log::alert("processing");
             $form = $request->validated();
             # process Customer's Order
             $this->orderRepository->processCustomerOrderRequest(
                 $form['products'],
                 $this->productRepository,
                 $this->productIngredientRepository,
-                $this->ingredientRepository
+                $this->ingredientRepository,
+                $this->usageRepository
             );
 
             return JsonResponseAPI::successResponse("A new Order has been created successfully.", null, 201);

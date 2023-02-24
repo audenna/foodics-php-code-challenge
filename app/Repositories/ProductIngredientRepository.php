@@ -92,9 +92,14 @@ class ProductIngredientRepository extends BaseRepositoryAbstract
      *
      * @param Order $order
      * @param IngredientRepository $ingredientRepository
+     * @param IngredientOrderUsageRepository $usageRepository
      * @return void
      */
-    public function processIngredientStockUpdatesByOrder(Order $order, IngredientRepository $ingredientRepository): void
+    public function processIngredientStockUpdatesByOrder(
+        Order                          $order,
+        IngredientRepository           $ingredientRepository,
+        IngredientOrderUsageRepository $usageRepository
+    ): void
     {
         try {
 
@@ -104,7 +109,10 @@ class ProductIngredientRepository extends BaseRepositoryAbstract
                 foreach ($product_ingredients as $product_ingredient) {
                     # update the Ingredients based on the quantity requested
                     $total_quantity = Utils::convert_to_2_decimal_places($order->getQuantity() * $product_ingredient->getQtyRequired());
+                    # update the quantity used
                     $ingredientRepository->updateAvailableStock($product_ingredient->getIngredientId(), $total_quantity);
+                    # log the Ingredient usage
+                    $usageRepository->saveLog($order->getId(), $product_ingredient->getIngredientId(), $total_quantity);
                 }
             }
 

@@ -3,9 +3,11 @@
 namespace Tests;
 
 use App\Models\Ingredient;
+use App\Models\IngredientOrderUsage;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductIngredient;
+use App\Repositories\IngredientOrderUsageRepository;
 use App\Repositories\IngredientRepository;
 use App\Repositories\OrderRepository;
 use App\Repositories\ProductIngredientRepository;
@@ -47,6 +49,11 @@ abstract class TestCase extends BaseTestCase
     protected ProductIngredientRepository $productIngredientRepository;
 
     /**
+     * @var IngredientOrderUsageRepository
+     */
+    protected IngredientOrderUsageRepository $usageRepository;
+
+    /**
      * @var string
      */
     protected string $api_base_path = 'api';
@@ -70,6 +77,7 @@ abstract class TestCase extends BaseTestCase
         $this->orderRepository             = new OrderRepository(new Order());
         $this->ingredientRepository        = new IngredientRepository(new Ingredient());
         $this->productIngredientRepository = new ProductIngredientRepository(new ProductIngredient());
+        $this->usageRepository             = new IngredientOrderUsageRepository(new IngredientOrderUsage());
     }
 
     /**

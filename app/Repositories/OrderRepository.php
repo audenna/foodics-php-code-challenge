@@ -50,19 +50,21 @@ class OrderRepository extends BaseRepositoryAbstract
      * @param ProductRepository $productRepository
      * @param ProductIngredientRepository $productIngredientRepository
      * @param IngredientRepository $ingredientRepository
+     * @param IngredientOrderUsageRepository $usageRepository
      * @return void
      */
     public function processCustomerOrderRequest(
-        array                       $customerOrders,
-        ProductRepository           $productRepository,
-        ProductIngredientRepository $productIngredientRepository,
-        IngredientRepository        $ingredientRepository
+        array                          $customerOrders,
+        ProductRepository              $productRepository,
+        ProductIngredientRepository    $productIngredientRepository,
+        IngredientRepository           $ingredientRepository,
+        IngredientOrderUsageRepository $usageRepository
     ): void
     {
         try {
 
             if (count($customerOrders)) {
-                DB::transaction(function () use ($customerOrders, $productRepository, $productIngredientRepository, $ingredientRepository) {
+                DB::transaction(function () use ($customerOrders, $productRepository, $productIngredientRepository, $ingredientRepository, $usageRepository) {
                     foreach ($customerOrders as $order) {
                         # check that the product exists
                         if ($productRepository->findById($order['product_id'])) {
@@ -72,7 +74,7 @@ class OrderRepository extends BaseRepositoryAbstract
                             # process the Ingredient stock update.
                             # This can also be added in the OrderObserver, if Transactional approach is not considered
                             /** @var Order $new_order */
-                            $productIngredientRepository->processIngredientStockUpdatesByOrder($new_order, $ingredientRepository);
+                            $productIngredientRepository->processIngredientStockUpdatesByOrder($new_order, $ingredientRepository, $usageRepository);
                         }
                     }
                     # dispatch an email if any of the ingredients has gone below 50%

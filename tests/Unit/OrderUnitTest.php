@@ -3,13 +3,9 @@
 namespace Tests\Unit;
 
 use App\Http\Requests\OrderRequest;
-use App\Models\Ingredient;
-use App\Models\Order;
 use App\Models\Product;
 use App\Services\Caches\ProductCache;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
 use Tests\TestCase;
 
 class OrderUnitTest extends TestCase
@@ -73,7 +69,8 @@ class OrderUnitTest extends TestCase
             $order['products'],
             $this->productRepository,
             $this->productIngredientRepository,
-            $this->ingredientRepository
+            $this->ingredientRepository,
+            $this->usageRepository
         );
 
         # assert a new Order has been created

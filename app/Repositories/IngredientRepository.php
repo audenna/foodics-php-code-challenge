@@ -89,8 +89,7 @@ class IngredientRepository extends BaseRepositoryAbstract
         try {
 
             # check that the ingredient exists before updating
-            $ingredient = $this->findById($ingredientId);
-
+            $ingredient       = $this->findSingleModelByKeyValuePair(['id' => $ingredientId, 'is_out_of_stock' => 0]);
             if ($ingredient) {
                 $new_quantity = $ingredient->getAvailableStock() - $totalRequiredQuantity;
                 # update the Ingredient
