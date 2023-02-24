@@ -7,6 +7,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 
 class IngredientOutOfStockNotification extends Notification
 {
@@ -17,7 +18,10 @@ class IngredientOutOfStockNotification extends Notification
      *
      * @param Ingredient $ingredient
      */
-    public function __construct(protected Ingredient $ingredient) { }
+    public function __construct(protected Ingredient $ingredient)
+    {
+        Log::alert("Sending email notification to Client");
+    }
 
     /**
      * Get the notification's delivery channels.

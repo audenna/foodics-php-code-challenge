@@ -3,8 +3,6 @@
 namespace App\Http\Requests;
 
 use App\Http\Requests\Base\BaseFormRequest;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\Rule;
 
 class OrderRequest extends BaseFormRequest
 {
@@ -23,7 +21,7 @@ class OrderRequest extends BaseFormRequest
                 'required',
                 'integer',
                 function ($key, $value, $callback) {
-                    # check that the product still has enough quantity in stock
+                    # check that at least one Ingredient has enough to handle the request
 
                 }
             ]
@@ -37,10 +35,10 @@ class OrderRequest extends BaseFormRequest
     public function messages(): array
     {
         return [
-            'products.required' => 'An array of product is required to proceed.',
-            'products.array'    => 'Products key is not an array.',
+            'products.required'              => 'An array of product is required to proceed.',
+            'products.array'                 => 'Products key is not an array.',
             'products.*.product_id.required' => 'You need to select at least, one product to proceed.',
-            'products.*.product_id.integer' => 'At least, one selected product is invalid.',
+            'products.*.product_id.integer'  => 'At least, one selected product is invalid.',
         ];
     }
 }

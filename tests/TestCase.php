@@ -12,21 +12,21 @@ use App\Repositories\IngredientRepository;
 use App\Repositories\OrderRepository;
 use App\Repositories\ProductIngredientRepository;
 use App\Repositories\ProductRepository;
-use App\Services\Caches\ProductCache;
 use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\SQLiteBuilder;
 use Illuminate\Database\SQLiteConnection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Fluent;
 
 abstract class TestCase extends BaseTestCase
 {
-    use CreatesApplication, RefreshDatabase, WithFaker;
+    use CreatesApplication, RefreshDatabase, WithFaker, HasFactory;
 
     /**
      * @var ProductRepository

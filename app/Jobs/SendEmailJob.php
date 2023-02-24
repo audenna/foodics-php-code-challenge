@@ -2,7 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Models\Customer;
 use App\Models\Ingredient;
+use App\Notifications\IngredientOutOfStockNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -25,6 +27,9 @@ class SendEmailJob implements ShouldQueue
      */
     public function handle(): void
     {
-        Log::alert("handling Email notification through Job...");
+        Log::alert("Handling Email notification through Job...");
+        # create a default User
+        $customer = Customer::factory()->create();
+        $customer->notify((new IngredientOutOfStockNotification($this->ingredient))->delay(2));
     }
 }
