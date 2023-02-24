@@ -37,6 +37,7 @@ class OrderController extends Controller
     {
         try {
 
+            Log::alert("processing");
             $form = $request->validated();
             # process Customer's Order
             $this->orderRepository->processCustomerOrderRequest(
@@ -46,7 +47,7 @@ class OrderController extends Controller
                 $this->ingredientRepository
             );
 
-            return JsonResponseAPI::successResponse("A new Order has been created successfully.");
+            return JsonResponseAPI::successResponse("A new Order has been created successfully.", null, 201);
 
         } catch (\Exception $exception) {
             Log::error($exception);

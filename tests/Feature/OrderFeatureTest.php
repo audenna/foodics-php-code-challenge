@@ -42,7 +42,7 @@ class OrderFeatureTest extends TestCase
      }
      * @return void
      */
-    public function test_order_can_be_successfully_created(): void
+    public function test_order_can_be_successfully_processed(): void
     {
         # trigger Database seeder
         $this->seed();
@@ -62,7 +62,7 @@ class OrderFeatureTest extends TestCase
 
         # try to make a post request to the Order endpoint
         $this->json('POST', "{$this->api_base_path}/orders", $payload)
-            ->assertStatus(200)
+            ->assertCreated()
             ->json();
     }
 }
