@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Http\Requests\OrderRequest;
+use App\Models\Ingredient;
 use App\Models\Order;
 use App\Models\Product;
 use App\Services\Caches\ProductCache;
@@ -67,9 +68,17 @@ class OrderUnitTest extends TestCase
         ];
 
         # process Customer requests
-        $this->orderRepository->processCustomerOrderRequest($order['products']);
+        # This should be called from the Order Controller
+        $this->orderRepository->processCustomerOrderRequest(
+            $order['products'],
+            $this->productRepository,
+            $this->productIngredientRepository,
+            $this->ingredientRepository
+        );
 
         # assert a new Order has been created
         $this->assertDatabaseCount('orders', 1);
+
+        # assert that all the Ingredients got reduced
     }
 }

@@ -2,10 +2,13 @@
 
 namespace App\Repositories;
 
+use App\Jobs\SendEmailJob;
 use App\Models\Ingredient;
 use App\Repositories\Base\BaseRepositoryAbstract;
 use App\Utils\Utils;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class IngredientRepository extends BaseRepositoryAbstract
@@ -81,18 +84,78 @@ class IngredientRepository extends BaseRepositoryAbstract
      *
      * @param int $ingredientId
      * @param float $totalRequiredQuantity
-     * @return void
+     * @return Model|null
      */
-    public function updateAvailableStock(int $ingredientId, float $totalRequiredQuantity): void
+    public function updateAvailableStock(int $ingredientId, float $totalRequiredQuantity): ?Model
     {
         try {
 
             # check that the ingredient exists before updating
             $ingredient = $this->findById($ingredientId);
+
             if ($ingredient) {
-                $this->updateById($ingredientId, ['available_stock_in_gram' => $ingredient->getAvailableStock() - $totalRequiredQuantity]);
+                $new_quantity = $ingredient->getAvailableStock() - $totalRequiredQuantity;
+                # update the Ingredient
+                $ingredient   = $this->updateByIdAndGetBackRecord($ingredientId,
+                    [
+                        'available_stock_in_gram' => $new_quantity,
+                        'is_out_of_stock'         => $new_quantity == 0,
+                    ]
+                );
             }
 
-        } catch (\Exception $exception) { Log::error($exception); }
+            return $ingredient;
+
+        } catch (\Exception $exception) {
+            Log::error($exception);
+
+            return null;
+        }
     }
+
+    /**
+     *
+     * @param int $ingredientId
+     * @return void
+     */
+    public function updateIsEmailSent(int $ingredientId): void
+    {
+        DB::table($this->databaseTableName)->where('id', $ingredientId)->update(['is_email_sent' => 1]);
+    }
+
+    /**
+     * @return int
+     */
+    public function hasAnEmailBeenSent(): int
+    {
+        return $this->countRecords('id', ['is_email_sent' => 1]);
+    }
+
+    /**
+     *
+     * @return Model|null
+     */
+    public function getTheIngredientThatHasGoneBelowTheThreshold(): ?Model
+    {
+        try {
+
+            # get the Ingredient that's below 50%
+            $ingredient = DB::select(
+                "
+                SELECT id FROM {$this->databaseTableName}
+                WHERE is_out_of_stock = 0
+                AND available_stock_in_gram < threshold_qty
+                AND (SELECT COUNT(*) FROM {$this->databaseTableName} WHERE is_email_sent = 1) = 0
+                LIMIT 1"
+            ) [0] ?? null;
+
+            return $ingredient ? $this->findById($ingredient->id) : null;
+
+        } catch (\Exception $exception) {
+            Log::error($exception);
+
+            return null;
+        }
+    }
+
 }

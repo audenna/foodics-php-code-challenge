@@ -26,6 +26,15 @@ interface BaseRepositoryInterface
     public function updateById(int $modelId, array $attributes): bool;
 
     /**
+     * This updates an existing model by its id
+     *
+     * @param int $modelId
+     * @param array $attributes
+     * @return Model
+     */
+    public function updateByIdAndGetBackRecord(int $modelId, array $attributes): Model;
+
+    /**
      *
      * @param array $queries
      * @param array $columns

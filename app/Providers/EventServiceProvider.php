@@ -47,5 +47,6 @@ class EventServiceProvider extends ServiceProvider
     private function bootModelObservers(): void
     {
         ProductIngredient::observe(ProductIngredientObserver::class);
+        Ingredient::observe(IngredientObserver::class);
     }
 }

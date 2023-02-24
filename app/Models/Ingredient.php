@@ -67,5 +67,11 @@ class Ingredient extends Model
         return $this->attributes['threshold_qty'];
     }
 
-
+    /**
+     * @return bool
+     */
+    public function isOutOfStock(): bool
+    {
+        return (bool) $this->attributes['is_out_of_stock'];
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+
 use App\Utils\Utils;
 use Database\Seeders\IngredientSeeder;
 use Tests\TestCase;
@@ -31,7 +32,7 @@ class IngredientUnitTest extends TestCase
         # Run the ProductSeeder...
         $this->seed(IngredientSeeder::class);
 
-        # assert that ingredients stated exists
+        # assert that the ingredients stated exists
         $this->assertDatabaseHas('ingredients', ['name' => 'Beef']);
         $this->assertDatabaseHas('ingredients', ['name' => 'Cheese']);
         $this->assertDatabaseHas('ingredients', ['name' => 'Onion']);
@@ -54,5 +55,79 @@ class IngredientUnitTest extends TestCase
 
         # assert that the database now has the newly created ingredient
         $this->assertDatabaseHas('ingredients', ['name' => $ingredient->getName()]);
+    }
+
+    /**
+     *
+     * @return void
+     */
+    public function test_an_ingredient_can_be_out_of_stock(): void
+    {
+        # create a new Ingredient
+        $stock      = $this->faker->numberBetween(100, 500);
+        $ingredient = $this->ingredientRepository->createNewIngredient($this->faker->sentence(1), $stock);
+        # assert that the Ingredient was created
+        $this->assertNotNull($ingredient);
+
+        # assert that the new Ingredient cab be found
+        $this->assertDatabaseHas('ingredients', ['name' => $ingredient->getName()]);
+
+        # consume the same quantity of stock available
+        $this->ingredientRepository->updateAvailableStock($ingredient->getId(), $stock);
+        # assert that the Ingredient is out of stock
+        $this->assertTrue($this->ingredientRepository->findById($ingredient->getId())->isOutOfStock());
+    }
+
+    /**
+     *
+     * @return void
+     */
+    public function test_an_ingredient_can_reached_below_its_threshold(): void
+    {
+        # trigger the IngredientSeeder
+        $this->seed(IngredientSeeder::class);
+
+        # assert that the ingredient model has been populated
+        $this->assertDatabaseCount('ingredients', 3);
+
+        # get the Beef Ingredient
+        $ingredient = $this->ingredientRepository->findSingleModelByKeyValuePair(['name' => 'Beef']);
+        # assert that the Ingredient is available
+        $this->assertNotNull($ingredient);
+
+        # consume less than 50 % of the Ingredients
+        $added_amount_of_stock = 10;
+        $ingredient = $this->ingredientRepository->updateAvailableStock($ingredient->getId(), $ingredient->getThreshold() + $added_amount_of_stock);
+        # assert that the Stock has gone below its threshold (50%)
+        $this->assertTrue($ingredient->getAvailableStock() < $ingredient->getThreshold());
+    }
+
+    /**
+     *
+     * @return void
+     */
+    public function test_an_email_can_be_sent_when_an_ingredient_has_reached_below_its_threshold(): void
+    {
+        # trigger the IngredientSeeder
+        $this->seed(IngredientSeeder::class);
+
+        # assert that the ingredient model has been populated
+        $this->assertDatabaseCount('ingredients', 3);
+
+        # get the Beef Ingredient
+        $ingredient = $this->ingredientRepository->findSingleModelByKeyValuePair(['name' => 'Beef']);
+        # assert that the Ingredient is available
+        $this->assertNotNull($ingredient);
+
+        # consume less than 50 % of the Ingredients
+        $added_amount_of_stock = 10;
+        $ingredient = $this->ingredientRepository->updateAvailableStock($ingredient->getId(), $ingredient->getThreshold() + $added_amount_of_stock);
+        # assert that the Stock has gone below its threshold (50%)
+        $this->assertTrue($ingredient->getAvailableStock() < $ingredient->getThreshold());
+
+        # get the Ingredient that has gone below 50%
+        $ingredient_with_less_stock = $this->ingredientRepository->getTheIngredientThatHasGoneBelowTheThreshold();
+        # assert that an Ingredient that has gone below 50% can be retrieved
+        $this->assertNotNull($ingredient_with_less_stock);
     }
 }

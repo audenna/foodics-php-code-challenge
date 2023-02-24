@@ -79,6 +79,21 @@ abstract class BaseRepositoryAbstract implements BaseRepositoryInterface
     }
 
     /**
+     * This updates an existing model by its id
+     *
+     * @param int $modelId
+     * @param array $attributes
+     * @return Model
+     */
+    public function updateByIdAndGetBackRecord(int $modelId, array $attributes): Model
+    {
+        $model = $this->findById($modelId);
+        $model->update($attributes);
+
+        return $this->findById($modelId);
+    }
+
+    /**
      * Get all Models or entities
      *
      * @param array $columns
