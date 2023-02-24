@@ -90,18 +90,16 @@ class IngredientRepository extends BaseRepositoryAbstract
 
             # check that the ingredient exists before updating
             $ingredient       = $this->findSingleModelByKeyValuePair(['id' => $ingredientId, 'is_out_of_stock' => 0]);
-            if ($ingredient) {
-                $new_quantity = $ingredient->getAvailableStock() - $totalRequiredQuantity;
-                # update the Ingredient
-                $ingredient   = $this->updateByIdAndGetBackRecord($ingredientId,
-                    [
-                        'available_stock_in_gram' => $new_quantity,
-                        'is_out_of_stock'         => $new_quantity == 0,
-                    ]
-                );
-            }
+            if (! $ingredient || $totalRequiredQuantity > $ingredient->getAvailableStock()) return null;
 
-            return $ingredient;
+            $new_quantity = $ingredient->getAvailableStock() - $totalRequiredQuantity;
+            # update the Ingredient
+            return $this->updateByIdAndGetBackRecord($ingredientId,
+                [
+                    'available_stock_in_gram' => $new_quantity,
+                    'is_out_of_stock'         => $new_quantity == 0,
+                ]
+            );
 
         } catch (\Exception $exception) {
             Log::error($exception);
@@ -132,8 +130,7 @@ class IngredientRepository extends BaseRepositoryAbstract
             $ingredient = DB::select(
                 "
                 SELECT id FROM {$this->databaseTableName}
-                WHERE is_out_of_stock = 0
-                AND available_stock_in_gram < threshold_qty
+                WHERE available_stock_in_gram < threshold_qty
                 AND (SELECT COUNT(*) FROM {$this->databaseTableName} WHERE is_email_sent = 1) = 0
                 LIMIT 1"
             ) [0] ?? null;

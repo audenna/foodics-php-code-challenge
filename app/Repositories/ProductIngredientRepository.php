@@ -110,9 +110,11 @@ class ProductIngredientRepository extends BaseRepositoryAbstract
                     # update the Ingredients based on the quantity requested
                     $total_quantity = Utils::convert_to_2_decimal_places($order->getQuantity() * $product_ingredient->getQtyRequired());
                     # update the quantity used
-                    $ingredientRepository->updateAvailableStock($product_ingredient->getIngredientId(), $total_quantity);
-                    # log the Ingredient usage
-                    $usageRepository->saveLog($order->getId(), $product_ingredient->getIngredientId(), $total_quantity);
+                    $ingredient     = $ingredientRepository->updateAvailableStock($product_ingredient->getIngredientId(), $total_quantity);
+                    # log the Ingredient usage if there was a subtraction in the available quantity
+                    if ($ingredient) {
+                        $usageRepository->saveLog($order->getId(), $product_ingredient->getIngredientId(), $total_quantity);
+                    }
                 }
             }
 

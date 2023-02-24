@@ -97,6 +97,7 @@ class OrderRepository extends BaseRepositoryAbstract
             # get the Ingredient that has gone below 50%
             $ingredient_with_less_stock = $ingredientRepository->getTheIngredientThatHasGoneBelowTheThreshold();
             if ($ingredient_with_less_stock) {
+                Log::alert($ingredient_with_less_stock);
                 # trigger a Job to handle the email dispatch and delay for 2 seconds
                 /** @var Ingredient $ingredient_with_less_stock */
                 dispatch(new SendEmailJob($ingredient_with_less_stock))->delay(Carbon::now()->addSeconds(2));

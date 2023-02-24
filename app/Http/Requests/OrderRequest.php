@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Http\Requests\Base\BaseFormRequest;
+use Illuminate\Support\Facades\Log;
 
 class OrderRequest extends BaseFormRequest
 {
@@ -22,7 +23,9 @@ class OrderRequest extends BaseFormRequest
                 'integer',
                 function ($key, $value, $callback) {
                     # check that at least one Ingredient has enough to handle the request
-
+                    if (! $this->ingredientRepository->countRecords('id', ['is_out_of_stock' => 0])) {
+                        return $callback("Unable to proceed with your request at this time. Product ingredients are out of stock.");
+                    }
                 }
             ]
         ];

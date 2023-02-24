@@ -24,7 +24,7 @@ class OrderUnitTest extends TestCase
             ProductCache::refresh();
         }
 
-        $request = new OrderRequest($this->orderRepository);
+        $request = new OrderRequest($this->orderRepository, $this->ingredientRepository,$this->productRepository);
         $this->assertEquals(
             [
                 "products" => "required|array",

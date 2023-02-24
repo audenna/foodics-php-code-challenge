@@ -3,7 +3,9 @@
 namespace App\Http\Requests\Base;
 
 
+use App\Repositories\IngredientRepository;
 use App\Repositories\OrderRepository;
+use App\Repositories\ProductRepository;
 use App\Services\JsonResponses\JsonResponseAPI;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -15,8 +17,14 @@ class BaseFormRequest extends FormRequest
     /**
      *
      * @param OrderRepository $orderRepository
+     * @param IngredientRepository $ingredientRepository
+     * @param ProductRepository $productRepository
      */
-    public function __construct(protected OrderRepository $orderRepository) { parent::__construct(); }
+    public function __construct(
+        protected OrderRepository      $orderRepository,
+        protected IngredientRepository $ingredientRepository,
+        protected ProductRepository    $productRepository,
+    ) { parent::__construct(); }
 
     /**
      * THis overrides the default throwable failed message in json format
