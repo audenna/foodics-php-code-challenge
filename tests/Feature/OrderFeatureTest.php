@@ -32,14 +32,6 @@ class OrderFeatureTest extends TestCase
 
     /**
      *
-     * {
-        "products": [
-            {
-                "product_id": 1,
-                "quantity": 2,
-            }
-        ]
-     }
      * @return void
      */
     public function test_order_can_be_successfully_processed(): void
