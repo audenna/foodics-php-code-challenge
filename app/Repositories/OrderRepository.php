@@ -6,6 +6,7 @@ use App\Jobs\SendEmailJob;
 use App\Models\Ingredient;
 use App\Models\Order;
 use App\Repositories\Base\BaseRepositoryAbstract;
+use App\Services\Caches\ProductCache;
 use App\Utils\Utils;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -66,8 +67,8 @@ class OrderRepository extends BaseRepositoryAbstract
             if (count($customerOrders)) {
                 DB::transaction(function () use ($customerOrders, $productRepository, $productIngredientRepository, $ingredientRepository, $usageRepository) {
                     foreach ($customerOrders as $order) {
-                        # check that the product exists
-                        if ($productRepository->findById($order['product_id'])) {
+                        # check that the product exists in the Cache
+                        if (ProductCache::findByColumnAndValue('id', $order['product_id'])) {
                             # save the order details
                             $new_order = $this->creatOrder($order['product_id'], $order['quantity']);
 

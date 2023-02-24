@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Http\Requests\Base\BaseFormRequest;
-use Illuminate\Support\Facades\Log;
+use App\Services\Caches\ProductCache;
 
 class OrderRequest extends BaseFormRequest
 {
@@ -17,7 +17,14 @@ class OrderRequest extends BaseFormRequest
     {
         return [
             "products" => "required|array",
-            'products.*.product_id' => "required|integer|exists:products,id",
+            'products.*.product_id' => [
+                'required',
+                'integer',
+                function ($key, $value, $callback) {
+                    # check that the product is available in the Cache
+                    if (! ProductCache::findByColumnAndValue('id', $value)) return $callback("Invalid product selected.");
+                }
+            ],
             'products.*.quantity' => [
                 'required',
                 'integer',
