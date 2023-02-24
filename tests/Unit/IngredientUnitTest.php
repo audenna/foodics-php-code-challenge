@@ -16,7 +16,7 @@ class IngredientUnitTest extends TestCase
      */
     public function test_default_ingredients_can_be_seeded(): void
     {
-        # Run the ProductSeeder...
+        # Run the IngredientSeeder...
         $this->seed(IngredientSeeder::class);
 
         # asserts that three ingredients already exists
@@ -29,7 +29,7 @@ class IngredientUnitTest extends TestCase
      */
     public function test_ingredients_has_seeded_names(): void
     {
-        # Run the ProductSeeder...
+        # Run the IngredientSeeder...
         $this->seed(IngredientSeeder::class);
 
         # assert that the ingredients stated exists

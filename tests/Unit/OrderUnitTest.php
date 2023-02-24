@@ -84,7 +84,5 @@ class OrderUnitTest extends TestCase
 
         # assert a new Order has been created
         $this->assertDatabaseCount('orders', 1);
-
-        # assert that all the Ingredients got reduced
     }
 }
